@@ -9,7 +9,7 @@ import { handleServerMessagePrompt } from "./utils/handleServerMessagePrompt";
 import { AI_MODEL } from "./constants/aiModel.constants";
 import { showMainMenu } from "./utils/showMainMenu";
 
-dotenv.config();
+dotenv.config({path:'./../client/.env'});
 
 const main = async () => {
   await mcpClient.connect(transport);

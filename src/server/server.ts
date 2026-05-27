@@ -1,6 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: './src/server/.env' });
+
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
 import { mcpServer } from "./config/mcpServer";
+import { initializeDatabase } from "./config/database";
 import { makeCreateUserTool } from "./builders/tools/makeCreateUserTool";
 import { makeGetUsersResource } from "./builders/resources/makeGetUsersResource";
 import { makeGetUserDetailsResource } from "./builders/resources/makeGetUserDetailsResource";
@@ -73,6 +77,7 @@ mcpServer.registerTool(
 );
 
 const main = async () => {
+  await initializeDatabase();
   const transport = new StdioServerTransport();
   await mcpServer.connect(transport);
 };

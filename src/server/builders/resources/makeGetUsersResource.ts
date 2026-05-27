@@ -1,3 +1,5 @@
+import { getPool } from "../../config/database";
+
 /**
  * @description Function that creates configuration and callback for the get users resource. 
  * The resource retrieves all users' data from the database and returns it in JSON format.
@@ -11,9 +13,8 @@ export const makeGetUsersResource = () => {
   };
 
   const callback = async (uri: URL) => {
-    const users = await import("../../../data/users.json", {
-      with: { type: "json" },
-    }).then((m) => m.default);
+    const result = await getPool().query('SELECT id, name, email, address, phone FROM users ORDER BY id');
+    const users = result.rows;
 
     return {
       contents: [

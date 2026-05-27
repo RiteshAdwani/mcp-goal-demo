@@ -1,3 +1,5 @@
+import { getPool } from "../../config/database";
+
 /**
  * @description Function that creates configuration and callback for the get user details resource. 
  * The resource retrieves a user's details from the database based on a provided user ID. 
@@ -15,10 +17,11 @@ export const makeGetUserDetailsResource = () => {
     uri: URL,
     { userId }: { userId?: string | string[] },
   ): Promise<{ contents: Array<{ uri: string; text: string; mimeType: string }> }> => {
-    const users = await import("../../../data/users.json", {
-      with: { type: "json" },
-    }).then((m) => m.default);
-    const user = users.find((u) => u.id === Number.parseInt(userId as string));
+    const result = await getPool().query(
+      'SELECT id, name, email, address, phone FROM users WHERE id = $1',
+      [userId as string]
+    );
+    const user = result.rows[0];
 
     if (user == null) {
       return {
