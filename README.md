@@ -70,7 +70,6 @@ npm install
 
 **Server** — create `src/server/.env`:
 ```
-PORT=3000
 DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 ```
 
