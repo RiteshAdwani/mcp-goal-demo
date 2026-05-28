@@ -5,7 +5,7 @@
   "main": "build/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node build/server.js",
+    "start": "node build/server/server.js",
     "server:build": "tsc",
     "server:build:watch": "tsc --watch",
     "server:dev": "tsx src/server/server.ts",
