@@ -1,8 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: './src/server/.env' });
 
+import { createServer } from 'node:http';
 import { ResourceTemplate } from "@modelcontextprotocol/sdk/server/mcp";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio";
+import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp";
 import { mcpServer } from "./config/mcpServer";
 import { initializeDatabase } from "./config/database";
 import { makeCreateUserTool } from "./builders/tools/makeCreateUserTool";
@@ -78,8 +80,43 @@ mcpServer.registerTool(
 
 const main = async () => {
   await initializeDatabase();
-  const transport = new StdioServerTransport();
-  await mcpServer.connect(transport);
+
+  if (process.env.PORT) {
+    // HTTP mode — used when deployed (e.g. Railway)
+    const transport = new StreamableHTTPServerTransport({
+      sessionIdGenerator: undefined, // stateless
+    });
+
+    await mcpServer.connect(transport);
+
+    const server = createServer(async (req, res) => {
+      if (req.url === '/mcp') {
+        let body: unknown;
+        if (req.method === 'POST') {
+          const chunks: Buffer[] = [];
+          for await (const chunk of req) chunks.push(chunk as Buffer);
+          try {
+            body = JSON.parse(Buffer.concat(chunks).toString());
+          } catch {
+            body = undefined;
+          }
+        }
+        await transport.handleRequest(req, res, body);
+      } else {
+        res.writeHead(404);
+        res.end('Not found');
+      }
+    });
+
+    const port = Number(process.env.PORT) || 3000;
+    server.listen(port, () => {
+      console.log(`MCP HTTP server listening on port ${port}`);
+    });
+  } else {
+    // Stdio mode — used locally
+    const transport = new StdioServerTransport();
+    await mcpServer.connect(transport);
+  }
 };
 
 await main();
