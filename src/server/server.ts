@@ -79,10 +79,8 @@ mcpServer.registerTool(
 );
 
 const main = async () => {
-  await initializeDatabase();
-
   if (process.env.PORT) {
-    // HTTP mode — used when deployed (e.g. Railway)
+    // HTTP mode — used when deployed (e.g. Render)
     const transport = new StreamableHTTPServerTransport({
       sessionIdGenerator: undefined, // stateless
     });
@@ -112,8 +110,14 @@ const main = async () => {
     server.listen(port, () => {
       console.log(`MCP HTTP server listening on port ${port}`);
     });
+
+    // Initialize DB after server is already listening
+    initializeDatabase().catch((err) => {
+      console.error('Database initialization failed:', err);
+    });
   } else {
     // Stdio mode — used locally
+    await initializeDatabase();
     const transport = new StdioServerTransport();
     await mcpServer.connect(transport);
   }
