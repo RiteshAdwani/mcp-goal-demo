@@ -5,7 +5,7 @@
   "main": "build/server.js",
   "scripts": {
     "build": "tsc",
-    "start": "node build/server/server.js",
+    "start": "tsx src/server/server.ts",
     "server:build": "tsc",
     "server:build:watch": "tsc --watch",
     "server:dev": "tsx src/server/server.ts",
@@ -18,10 +18,10 @@
   "description": "",
   "devDependencies": {
     "@modelcontextprotocol/inspector": "^0.21.1",
-    "@types/node": "^25.5.2",
-    "tsx": "^4.21.0"
+    "@types/node": "^25.5.2"
   },
   "dependencies": {
+    "tsx": "^4.21.0",
     "@ai-sdk/google": "^3.0.61",
     "@google/genai": "^1.49.0",
     "@inquirer/prompts": "^8.4.1",
