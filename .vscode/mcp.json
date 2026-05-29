@@ -1,16 +1,8 @@
 {
   "servers": {
     "user-handling-mcp-server": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["build/server.js"],
-	  "cwd": "${workspaceFolder}",
-      "dev": {
-		"watch": "build/**/*.js",
-        "debug": {
-          "type": "node"
-        }
-      }
+      "type": "http",
+      "url": "https://mcp-goal-demo.onrender.com/mcp"
     }
   },
   "inputs": []
